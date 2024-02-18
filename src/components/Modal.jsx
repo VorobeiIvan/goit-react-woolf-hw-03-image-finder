@@ -1,11 +1,11 @@
-import * as basicLightbox from 'basiclightbox';
+const Modal = ({ onClose, src, alt }) => {
+  return (
+    <div className="Overlay" onClick={onClose}>
+      <div className="Modal">
+        <img src={src} alt={alt} />
+      </div>
+    </div>
+  );
+};
 
-const instance = basicLightbox.create(`
-<div class="overlay">
-  <div class="modal">
-    <img src="" alt="" />
-  </div>
-</div>;
-`);
-
-instance.show();
+export default Modal;
