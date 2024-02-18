@@ -16,6 +16,7 @@ class App extends Component {
     page: 1,
     largeImageURL: '',
     showModal: false,
+    allImagesLoaded: false,
   };
 
   componentDidMount() {
@@ -36,11 +37,15 @@ class App extends Component {
     this.setState({ loading: true });
     try {
       const data = await fetchImages(query, page);
+      const newImages = data.hits;
+      if (newImages.length < 12) {
+        this.setState({ allImagesLoaded: true });
+      }
       this.setState(prevState => ({
-        images: [...prevState.images, ...data.hits],
+        images: [...prevState.images, ...newImages],
         page: prevState.page + 1,
         loading: false,
-        error: data.hits.length === 0 ? 'No images found' : null,
+        error: newImages.length === 0 ? 'No images found' : null,
       }));
     } catch (error) {
       this.setState({ error: error.message, loading: false });
@@ -48,7 +53,7 @@ class App extends Component {
   };
 
   handleFormSubmit = query => {
-    this.setState({ query, images: [], page: 1 });
+    this.setState({ query, images: [], page: 1, allImagesLoaded: false });
     this.fetchImagesData(query, 1);
   };
 
@@ -65,7 +70,14 @@ class App extends Component {
   };
 
   render() {
-    const { images, loading, error, showModal, largeImageURL } = this.state;
+    const {
+      images,
+      loading,
+      error,
+      showModal,
+      largeImageURL,
+      allImagesLoaded,
+    } = this.state;
 
     return (
       <div className="App">
@@ -82,9 +94,10 @@ class App extends Component {
             />
           ))}
         </ImageGallery>
-        {images.length > 0 && !loading && (
+        {images.length > 0 && !loading && !allImagesLoaded && (
           <Button onClick={this.loadMoreImages}>Load more</Button>
         )}
+        {allImagesLoaded && <p>All images loaded for this query.</p>}
         {showModal && (
           <Modal src={largeImageURL} alt="" onClose={this.closeModal} />
         )}
