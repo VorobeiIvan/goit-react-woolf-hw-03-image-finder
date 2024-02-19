@@ -18,12 +18,15 @@ class App extends Component {
     allImagesLoaded: false,
   };
 
-  fetchImagesData = async (query, page) => {
+  fetchImagesData = async (
+    query = this.state.query,
+    page = this.state.page
+  ) => {
     this.setState({ loading: true });
     try {
       const data = await fetchImages(query, page);
       const newImages = data.hits;
-      if (newImages.length < 12) {
+      if (newImages.length === 0) {
         this.setState({ allImagesLoaded: true });
       }
       this.setState(prevState => ({
@@ -44,7 +47,7 @@ class App extends Component {
   };
 
   loadMoreImages = () => {
-    this.fetchImagesData(this.state.query, this.state.page);
+    this.fetchImagesData();
   };
 
   handleImageClick = largeImageURL => {
@@ -54,6 +57,12 @@ class App extends Component {
   closeModal = () => {
     this.setState({ showModal: false, largeImageURL: '' });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.query !== this.state.query) {
+      this.fetchImagesData(this.state.query, 1);
+    }
+  }
 
   render() {
     const {
