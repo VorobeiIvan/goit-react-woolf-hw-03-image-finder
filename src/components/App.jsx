@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
-import ImageGalleryItem from './ImageGalleryItem';
 import Button from './Button';
 import Modal from './Modal';
 import Loader from './Loader';
@@ -44,11 +43,12 @@ class App extends Component {
       this.setState(prevState => ({
         images: [...prevState.images, ...newImages],
         page: prevState.page + 1,
-        loading: false,
         error: newImages.length === 0 ? 'No images found' : null,
       }));
     } catch (error) {
       this.setState({ error: error.message, loading: false });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
@@ -84,16 +84,10 @@ class App extends Component {
         <Searchbar onSubmit={this.handleFormSubmit} />
         {error && <p>{error}</p>}
         {loading && <Loader />}
-        <ImageGallery>
-          {images.map(image => (
-            <ImageGalleryItem
-              key={image.id}
-              src={image.webformatURL}
-              alt={image.tags}
-              onClick={() => this.handleImageClick(image.largeImageURL)}
-            />
-          ))}
-        </ImageGallery>
+        <ImageGallery
+          images={images}
+          handleImageClick={this.handleImageClick}
+        />
         {images.length > 0 && !loading && !allImagesLoaded && (
           <Button onClick={this.loadMoreImages}>Load more</Button>
         )}
