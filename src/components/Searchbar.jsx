@@ -8,6 +8,15 @@ class Searchbar extends Component {
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.state.page !== prevState.page ||
+      this.state.searchText !== prevState.searchText
+    ) {
+      this.getData(this.state.searchText, this.state.page);
+    }
+  }
+
   handleChange = event => {
     this.setState({ query: event.target.value });
   };
