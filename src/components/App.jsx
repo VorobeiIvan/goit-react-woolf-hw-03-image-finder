@@ -18,20 +18,6 @@ class App extends Component {
     allImagesLoaded: false,
   };
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyPress);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
-
-  handleKeyPress = e => {
-    if (e.key === 'Escape') {
-      this.closeModal();
-    }
-  };
-
   fetchImagesData = async (query, page) => {
     this.setState({ loading: true });
     try {
