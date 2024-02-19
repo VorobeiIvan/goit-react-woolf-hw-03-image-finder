@@ -22,13 +22,6 @@ class App extends Component {
     document.addEventListener('keydown', this.handleKeyPress);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
-    if (prevState.query !== query || prevState.page !== page) {
-      this.fetchImagesData(query, page);
-    }
-  }
-
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
   }
@@ -61,11 +54,11 @@ class App extends Component {
 
   handleFormSubmit = query => {
     this.setState({ query, images: [], page: 1, allImagesLoaded: false });
+    this.fetchImagesData(query, 1);
   };
 
   loadMoreImages = () => {
-    const { query, page } = this.state;
-    this.setState({ page: page + 1 });
+    this.fetchImagesData(this.state.query, this.state.page);
   };
 
   handleImageClick = largeImageURL => {

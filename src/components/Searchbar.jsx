@@ -16,13 +16,6 @@ class Searchbar extends Component {
     document.removeEventListener('keydown', this.handleKeyPress);
   }
 
-  handleKeyPress = e => {
-    if (e.key === 'Escape') {
-      this.setState({ query: '' });
-      this.props.onSubmit('');
-    }
-  };
-
   handleChange = event => {
     this.setState({ query: event.target.value });
   };
