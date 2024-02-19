@@ -8,14 +8,6 @@ class Searchbar extends Component {
     };
   }
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyPress);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyPress);
-  }
-
   handleChange = event => {
     this.setState({ query: event.target.value });
   };
