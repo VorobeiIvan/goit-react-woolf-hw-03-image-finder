@@ -18,21 +18,25 @@ class App extends Component {
     allImagesLoaded: false,
   };
 
-  fetchImagesData = async (
-    query = this.state.query,
-    page = this.state.page
-  ) => {
+  componentDidUpdate(prevProps, prevState) {
+    const { query, page } = this.state;
+    if (prevState.query !== query || prevState.page !== page) {
+      this.fetchImagesData(query, page);
+    }
+  }
+
+  fetchImagesData = async (query, page) => {
     this.setState({ loading: true });
     try {
       const data = await fetchImages(query, page);
-      const newImages = data.hits;
-      if (newImages.length === 0) {
+      const { hits, totalHits } = data;
+      if (hits.length === 0) {
         this.setState({ allImagesLoaded: true });
       }
       this.setState(prevState => ({
-        images: [...prevState.images, ...newImages],
-        page: prevState.page + 1,
-        error: newImages.length === 0 ? 'No images found' : null,
+        images: [...prevState.images, ...hits],
+        error: hits.length === 0 ? 'No images found' : null,
+        allImagesLoaded: page >= Math.ceil(totalHits / 12),
       }));
     } catch (error) {
       this.setState({ error: error.message, loading: false });
@@ -42,12 +46,16 @@ class App extends Component {
   };
 
   handleFormSubmit = query => {
-    this.setState({ query, images: [], page: 1, allImagesLoaded: false });
-    this.fetchImagesData(query, 1);
+    const { images } = this.state;
+    if (query.trim() === '') {
+      this.setState({ images: [], page: 1, allImagesLoaded: false });
+    } else {
+      this.setState({ query, images: [], page: 1, allImagesLoaded: false });
+    }
   };
 
   loadMoreImages = () => {
-    this.fetchImagesData();
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   handleImageClick = largeImageURL => {
@@ -57,12 +65,6 @@ class App extends Component {
   closeModal = () => {
     this.setState({ showModal: false, largeImageURL: '' });
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.query !== this.state.query) {
-      this.fetchImagesData(this.state.query, 1);
-    }
-  }
 
   render() {
     const {
