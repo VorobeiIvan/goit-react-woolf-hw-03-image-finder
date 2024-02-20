@@ -46,10 +46,7 @@ class App extends Component {
   };
 
   handleFormSubmit = query => {
-    const { images } = this.state;
-    if (query.trim() === '') {
-      this.setState({ images: [], page: 1, allImagesLoaded: false });
-    } else {
+    if (query.trim() !== '') {
       this.setState({ query, images: [], page: 1, allImagesLoaded: false });
     }
   };
